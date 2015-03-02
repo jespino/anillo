@@ -19,6 +19,6 @@ def router(url_map):
     return handler
 
 def chain(*args):
-    return functools.reduce(lambda f1, f2: f1(f2), args)
+    return functools.reduce(lambda f1, f2: f2(f1), reversed(args))
 
 __all__ = ["anillo", "router", "chain"]
