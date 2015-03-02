@@ -1,3 +1,5 @@
+__version__ = (0, 0, 0)
+
 from werkzeug.wrappers import Request, Response
 
 def anillo(handler):
