@@ -1,5 +1,7 @@
 __version__ = (0, 0, 0)
 
+import functools
+
 from werkzeug.wrappers import Request, Response
 
 def anillo(handler):
@@ -13,7 +15,10 @@ def router(url_map):
     def handler(request):
         urls = url_map.bind_to_environ(request)
         endpoint, args = urls.match()
-        return endpoint(request, *args)
+        return endpoint(request, **args)
     return handler
 
-__all__ = ["anillo", "router"]
+def chain(*args):
+    return functools.reduce(lambda f1, f2: f1(f2), args)
+
+__all__ = ["anillo", "router", "chain"]
