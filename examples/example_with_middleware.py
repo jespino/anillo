@@ -1,8 +1,6 @@
 from anillo.app import application
 from anillo.utils import chain
-
-from werkzeug.wrappers import Response
-from werkzeug.serving import run_simple
+from anillo.http import Ok
 
 
 def middleware(func):
@@ -13,11 +11,12 @@ def middleware(func):
 
 
 def index(request):
-    return Response(request.new_data)
+    return Ok(request.new_data)
 
 
 app = application(chain(middleware, index))
 
 
 if __name__ == '__main__':
+    from werkzeug.serving import run_simple
     run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=True)
