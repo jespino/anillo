@@ -19,5 +19,5 @@ app = application(chain(
 
 
 if __name__ == '__main__':
-    from werkzeug.serving import run_simple
-    run_simple('127.0.0.1', 5000, app)
+    from anillo import serving
+    serving.run_simple(app, port=5000)
