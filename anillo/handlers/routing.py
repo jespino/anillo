@@ -18,8 +18,9 @@ This is a little example on how you can define routes:
   ]
 """
 
-from werkzeug.routing import Map, Rule, Submount
+from werkzeug.routing import Map, Rule, Submount, RequestRedirect
 from werkzeug.exceptions import NotFound, MethodNotAllowed
+from werkzeug.utils import redirect
 
 import anillo.http as http
 
@@ -88,7 +89,7 @@ def _build_rules(specs):
             yield Rule(match, endpoint=handler, **rulespec)
 
 
-def _build_urlmapping(urls):
+def _build_urlmapping(urls, strict_slashes=False, **kwargs):
     """Convers the anillo urlmappings list into
     werkzeug Map instance.
 
@@ -97,8 +98,7 @@ def _build_urlmapping(urls):
     """
 
     rules = _build_rules(urls)
-    return Map(list(rules))
-
+    return Map(rules=list(rules), strict_slashes=strict_slashes, **kwargs)
 
 def default_match_error_handler(exc):
     """
@@ -108,18 +108,20 @@ def default_match_error_handler(exc):
         return http.NotFound()
     elif isinstance(exc, MethodNotAllowed):
         return http.MethodNotAllowed()
+    elif isinstance(exc, RequestRedirect):
+        return redirect(exc.new_url)
     else:
         raise exc
 
 
-def router(specs, match_error=default_match_error_handler):
-    urlmapping = _build_urlmapping(specs)
+def router(specs, match_error=default_match_error_handler, **kwargs):
+    urlmapping = _build_urlmapping(specs, **kwargs)
 
     def handler(request):
         urls = urlmapping.bind_to_environ(request)
         try:
             endpoint, args = urls.match()
-        except (NotFound, MethodNotAllowed) as exc:
+        except Exception as exc:
             return match_error(exc)
         else:
             return endpoint(request, **args)
