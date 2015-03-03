@@ -8,4 +8,5 @@ def application(handler, request_cls=Request):
         return response(environ, start_response)
     return wrapper
 
-__all__ = ["app_builder"]
+
+__all__ = ["application"]
