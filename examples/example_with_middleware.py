@@ -1,4 +1,5 @@
-from anillo import anillo, chain
+from anillo.app import application
+from anillo.utils import chain
 
 from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
@@ -15,7 +16,7 @@ def index(request):
     return Response(request.new_data)
 
 
-app = anillo(chain(middleware, index))
+app = application(chain(middleware, index))
 
 
 if __name__ == '__main__':

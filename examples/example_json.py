@@ -1,4 +1,4 @@
-from anillo import anillo
+from anillo.app import application
 from anillo.middlewares.json import json_middleware
 
 from werkzeug.wrappers import Response
@@ -9,7 +9,7 @@ def index(request):
     return Response({"echo-response": request.data["echo"]}, mimetype="application/json")
 
 
-app = anillo(json_middleware(index))
+app = application(json_middleware(index))
 
 
 if __name__ == '__main__':

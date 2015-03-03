@@ -19,7 +19,7 @@ the router handler, if you want to affect everything.
 ### Basic example
 
 ```python
-from anillo import anillo
+from anillo.app import application
 
 from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
@@ -29,7 +29,7 @@ def index(request):
     return Response("Hello World!")
 
 
-app = anillo(index)
+app = application(index)
 
 
 if __name__ == '__main__':
@@ -39,7 +39,8 @@ if __name__ == '__main__':
 ### Basic with middleware
 
 ```python
-from anillo import anillo
+from anillo.app import application
+from anillo.utils import chain
 
 from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
@@ -56,7 +57,7 @@ def index(request):
     return Response(request.new_data)
 
 
-app = anillo(middleware(index))
+app = application(chain(middleware, index))
 
 
 if __name__ == '__main__':
@@ -66,7 +67,8 @@ if __name__ == '__main__':
 ### Basic with routing
 
 ```python
-from anillo import anillo, router
+from anillo.app import application
+from anillo.handlers import router
 
 from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Response
@@ -85,7 +87,7 @@ urls = Map([
     Rule("/hello", endpoint=hello),
 ])
 
-app = anillo(router(urls))
+app = application(router(urls))
 
 if __name__ == '__main__':
     run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=True)

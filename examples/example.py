@@ -1,4 +1,4 @@
-from anillo import anillo
+from anillo.app import application
 
 from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
@@ -8,7 +8,7 @@ def index(request):
     return Response("Hello World!")
 
 
-app = anillo(index)
+app = application(index)
 
 
 if __name__ == '__main__':

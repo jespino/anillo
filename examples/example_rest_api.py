@@ -1,4 +1,6 @@
-from anillo import anillo, router, chain
+from anillo.app import application
+from anillo.handlers import router
+from anillo.utils import chain
 from anillo.middlewares.json import json_middleware
 
 from werkzeug.routing import Map, Rule
@@ -38,7 +40,7 @@ urls = Map([
     Rule("/<int:index>", endpoint=delete, methods=["DELETE"]),
 ])
 
-app = anillo(chain(json_middleware, router(urls)))
+app = application(chain(json_middleware, router(urls)))
 
 if __name__ == '__main__':
     run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=True)

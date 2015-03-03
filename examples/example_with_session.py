@@ -1,4 +1,5 @@
-from anillo import anillo, chain
+from anillo.app import application
+from anillo.utils import chain
 from anillo.middlewares.session import session_middleware, MemoryStorage
 from anillo.middlewares.json import json_middleware
 
@@ -12,7 +13,7 @@ def index(request):
     return Response(request.session, mimetype="application/json")
 
 
-app = anillo(chain(
+app = application(chain(
     json_middleware,
     session_middleware(MemoryStorage()),
     index,

@@ -1,4 +1,5 @@
-from anillo import anillo, router
+from anillo.app import application
+from anillo.handlers import router
 
 from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Response
@@ -17,7 +18,7 @@ urls = Map([
     Rule("/hello", endpoint=hello),
 ])
 
-app = anillo(router(urls))
+app = application(router(urls))
 
 if __name__ == '__main__':
     run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=True)
