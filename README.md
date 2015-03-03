@@ -66,11 +66,8 @@ if __name__ == '__main__':
 
 ```python
 from anillo.app import application
-from anillo.handlers import router
+from anillo.handlers.routing import router, url
 from anillo.http import Ok
-
-from werkzeug.routing import Map, Rule
-
 
 def index(request):
     return Ok("Index")
@@ -79,10 +76,10 @@ def index(request):
 def hello(request):
     return Ok("Hello World!")
 
-urls = Map([
-    Rule("/", endpoint=index),
-    Rule("/hello", endpoint=hello),
-])
+urls = [
+    url("/", index),
+    url("/hello", hello),
+]
 
 app = application(router(urls))
 

@@ -1,5 +1,5 @@
 from anillo.app import application
-from anillo.handlers import router
+from anillo.handlers.routing import router, url, context
 from anillo.utils import chain
 from anillo.middlewares.json import json_middleware
 from anillo.http import NotFound, NoContent, Created, Ok
@@ -32,12 +32,14 @@ def delete(request, index):
     else:
         return NotFound()
 
-urls = Map([
-    Rule("/", endpoint=list, methods=["GET"]),
-    Rule("/", endpoint=create, methods=["POST"]),
-    Rule("/<int:index>", endpoint=detail, methods=["GET"]),
-    Rule("/<int:index>", endpoint=delete, methods=["DELETE"]),
-])
+urls = [
+    context("/api", [
+        url("/", list, methods=["get"]),
+        url("/", create, methods=["post"]),
+        url("/<int:index>", detail, methods=["get"]),
+        url("/<int:index>", delete, methods=["delete"]),
+    ])
+]
 
 app = application(chain(json_middleware, router(urls)))
 

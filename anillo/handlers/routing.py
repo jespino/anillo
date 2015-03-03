@@ -67,7 +67,7 @@ def context(match, urls):
     :return: The anillo url spec for url nesting.
     :rtype: dict
     """
-    return {"context": match
+    return {"context": match,
             "routes": urls}
 
 
@@ -82,10 +82,10 @@ def _build_rules(specs):
         if "context" in spec:
             yield Submount(spec["context"], list(_build_rules(spec.get("routes", []))))
         else:
-            spec = spec.copy()
+            rulespec = spec.copy()
             match = rulespec.pop("match")
             handler = rulespec.pop("handler")
-            yield Rule(match, endpoint=handler, **spec)
+            yield Rule(match, endpoint=handler, **rulespec)
 
 
 def _build_urlmapping(urls):
