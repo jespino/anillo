@@ -113,7 +113,7 @@ def default_match_error_handler(exc):
 
 
 def router(specs, match_error=default_match_error_handler):
-    urlmapping = _build_urlmapping(urls)
+    urlmapping = _build_urlmapping(specs)
 
     def handler(request):
         urls = urlmapping.bind_to_environ(request)
