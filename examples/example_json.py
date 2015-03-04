@@ -4,7 +4,7 @@ from anillo.http import Ok
 
 
 def index(request):
-    return Ok({"echo-response": request.data["echo"]}, mimetype="application/json")
+    return Ok({"echo-response": request.body["echo"]}, headers={"Content-Type": "application/json"})
 
 
 app = application(json_middleware(index))
