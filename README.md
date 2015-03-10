@@ -1,13 +1,14 @@
 # Anillo nanoframework
 
-Anillo is a Ring/Compojure inspired nanoframework build on top of werkzoug
-Request/Response abstraction and routing system.
+Anillo is a Ring/Compojure inspired nanoframework build on top of werkzeug
+library using some utilities and the routing system.
 
 The idea is create a really slim abstraction layer between WSGI and my
 handlers, with the less quantity of opinion about what are you implementing.
 
 You can use any template system, storage system or whatever you want, you only
-receive a werkzoug Request and must return a werkzoug Response.
+receive a Request (a dict object) and must return a Response (another dict
+object).
 
 ## Middlewares
 
@@ -68,6 +69,7 @@ if __name__ == '__main__':
 from anillo.app import application
 from anillo.handlers.routing import router, url
 from anillo.http import Ok
+
 
 def index(request):
     return Ok("Index")
