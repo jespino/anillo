@@ -4,8 +4,6 @@ from anillo.utils import chain
 from anillo.middlewares.json import json_middleware
 from anillo.http import NotFound, NoContent, Created, Ok
 
-from werkzeug.routing import Map, Rule
-
 database = []
 
 

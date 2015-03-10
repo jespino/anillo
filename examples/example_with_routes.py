@@ -2,6 +2,7 @@ from anillo.app import application
 from anillo.handlers.routing import router, url
 from anillo.http import Ok
 
+
 def index(request):
     return Ok("Index")
 

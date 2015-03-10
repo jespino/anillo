@@ -18,11 +18,49 @@ This is a little example on how you can define routes:
   ]
 """
 
-from werkzeug.routing import Map, Rule, Submount, RequestRedirect
+from werkzeug.routing import Map as WerkzeugMap, Rule, Submount, RequestRedirect
 from werkzeug.exceptions import NotFound, MethodNotAllowed
 from werkzeug.utils import redirect
 
 import anillo.http as http
+
+
+class Map(WerkzeugMap):
+    def bind_to_request(self, request, server_name=None, subdomain=None):
+        if server_name is None:
+            if 'HTTP_HOST' in request.headers:
+                server_name = request.headers['HTTP_HOST']
+            else:
+                server_name = request.server_name
+                if (request.scheme, request.server_port) not in (('https', '443'), ('http', '80')):
+                    server_name += ':' + request.server_port
+        elif subdomain is None:
+            server_name = server_name.lower()
+            if 'HTTP_HOST' in request.headers:
+                wsgi_server_name = request.headers.get('HTTP_HOST')
+            else:
+                wsgi_server_name = request.server_name
+                if (request.scheme, request.server_port) not in (('https', '443'), ('http', '80')):
+                    wsgi_server_name += ':' + request.server_port
+            wsgi_server_name = wsgi_server_name.lower()
+            cur_server_name = wsgi_server_name.split('.')
+            real_server_name = server_name.split('.')
+            offset = -len(real_server_name)
+            if cur_server_name[offset:] != real_server_name:
+                # This can happen even with valid configs if the server was
+                # accesssed directly by IP address under some situations.
+                # Instead of raising an exception like in Werkzeug 0.7 or
+                # earlier we go by an invalid subdomain which will result
+                # in a 404 error on matching.
+                subdomain = '<invalid>'
+            else:
+                subdomain = '.'.join(filter(None, cur_server_name[:offset]))
+
+        path_info = request.uri
+        return Map.bind(self, server_name, request.script_name,
+                        subdomain, request.scheme,
+                        request.request_method, path_info,
+                        query_args=request.query_string)
 
 
 def url(match, handler=None, methods=None, defaults=None,
@@ -100,6 +138,7 @@ def _build_urlmapping(urls, strict_slashes=False, **kwargs):
     rules = _build_rules(urls)
     return Map(rules=list(rules), strict_slashes=strict_slashes, **kwargs)
 
+
 def default_match_error_handler(exc):
     """
     Default implementation for match error handling.
@@ -118,7 +157,7 @@ def router(specs, match_error=default_match_error_handler, **kwargs):
     urlmapping = _build_urlmapping(specs, **kwargs)
 
     def handler(request):
-        urls = urlmapping.bind_to_environ(request)
+        urls = urlmapping.bind_to_request(request)
         try:
             endpoint, args = urls.match()
         except Exception as exc:

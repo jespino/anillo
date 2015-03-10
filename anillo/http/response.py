@@ -1,20 +1,23 @@
 from werkzeug.wrappers import BaseResponse
-from werkzeug.wrappers import ETagResponseMixin
-from werkzeug.wrappers import ResponseStreamMixin
-from werkzeug.wrappers import CommonResponseDescriptorsMixin
-from werkzeug.wrappers import WWWAuthenticateMixin
 
 
-class Response(BaseResponse, ETagResponseMixin, ResponseStreamMixin,
-               CommonResponseDescriptorsMixin,
-               WWWAuthenticateMixin):
-    """Full featured response object implementing the following mixins:
+class Response(dict):
+    def __init__(self, body=None, status=None, headers=None, **kwargs):
+        super().__init__({
+            "body": body,
+            "status": status,
+            "headers": headers if headers is not None else {}
+        })
+        self.update(**kwargs)
+        self.__dict__ = self
 
-    - :class:`ETagResponseMixin` for etag and cache control handling
-    - :class:`ResponseStreamMixin` to add support for the `stream` property
-    - :class:`CommonResponseDescriptorsMixin` for various HTTP descriptors
-    - :class:`WWWAuthenticateMixin` for HTTP authentication support
-    """
+
+class WerkzeugResponse(BaseResponse):
+    pass
+
+
+def response_to_werkzeug_response(response):
+    return WerkzeugResponse(response.body, status=response.status, headers=response.headers)
 
 
 class Ok(Response):
@@ -27,7 +30,7 @@ class Ok(Response):
     and that no more specific code in the 2xx series is appropriate. Unlike
     the 204 status code, a 200 response should include a response body.
     """
-    default_status = 200
+    status = 200
 
 
 class Created(Response):
@@ -39,7 +42,7 @@ class Created(Response):
     times when a new resource is created as a result of some controller action,
     in which case 201 would also be an appropriate response.
     """
-    default_status = 201
+    status = 201
 
 
 class Accepted(Response):
@@ -54,7 +57,7 @@ class Accepted(Response):
     Controller resources may send 202 responses, but other resource types
     should not.
     """
-    default_status = 202
+    status = 202
 
 
 class NoContent(Response):
@@ -67,7 +70,7 @@ class NoContent(Response):
     in conjunction with a GET request to indicate that the requested resource
     exists, but has no state representation to include in the body.
     """
-    default_status = 204
+    status = 204
 
 
 class MultipleChoices(Response):
@@ -77,7 +80,7 @@ class MultipleChoices(Response):
     It could be used to present different format options for video, list files
     with different extensions, or word sense disambiguation.
     """
-    default_status = 300
+    status = 300
 
 
 class MovedPermanently(Response):
@@ -89,7 +92,7 @@ class MovedPermanently(Response):
     client's requested resource. The REST API should specify the new URI in
     the response's Location header.
     """
-    default_status = 301
+    status = 301
 
 
 class Found(Response):
@@ -109,7 +112,7 @@ class Found(Response):
     and 307 ("Temporary Redirect"), either of which should be used
     instead of 302.
     """
-    default_status = 302
+    status = 302
 
 
 class SeeOther(Response):
@@ -126,7 +129,7 @@ class SeeOther(Response):
     Instead, the client may send a GET request to the value of the Location
     header.
     """
-    default_status = 303
+    status = 303
 
 
 class NotModified(Response):
@@ -139,7 +142,7 @@ class NotModified(Response):
     information associated with a resource but the client already has the most
     recent version of the representation.
     """
-    default_status = 304
+    status = 304
 
 
 class TemporaryRedirect(Response):
@@ -155,7 +158,7 @@ class TemporaryRedirect(Response):
     client's requested resource. For example, a 307 response can be used to
     shift a client request over to another host.
     """
-    default_status = 307
+    status = 307
 
 
 class BadRequest(Response):
@@ -165,7 +168,7 @@ class BadRequest(Response):
     400 is the generic client-side error status, used when no other 4xx error
     code is appropriate.
     """
-    default_status = 400
+    status = 400
 
 
 class Unauthorized(Response):
@@ -176,7 +179,7 @@ class Unauthorized(Response):
     protected resource without providing the proper authorization. It may have
     provided the wrong credentials or none at all.
     """
-    default_status = 401
+    status = 401
 
 
 class Forbidden(Response):
@@ -191,7 +194,7 @@ class Forbidden(Response):
     resources. If the client attempts a resource interaction that is outside of
     its permitted scope, the REST API should respond with 403.
     """
-    default_status = 403
+    status = 403
 
 
 class NotFound(Response):
@@ -201,7 +204,7 @@ class NotFound(Response):
     The 404 error status code indicates that the REST API can't map the
     client's URI to a resource.
     """
-    default_status = 404
+    status = 404
 
 
 class MethodNotAllowed(Response):
@@ -218,7 +221,7 @@ class MethodNotAllowed(Response):
         Allow: GET, POST
 
     """
-    default_status = 405
+    status = 405
 
 
 class NotAcceptable(Response):
@@ -231,7 +234,7 @@ class NotAcceptable(Response):
     will receive a 406 response if the API is only willing to format data as
     application/json.
     """
-    default_status = 406
+    status = 406
 
 
 class Conflict(Response):
@@ -243,7 +246,7 @@ class Conflict(Response):
     REST API may return this response code when a client tries to delete a
     non-empty store resource.
     """
-    default_status = 409
+    status = 409
 
 
 class Gone(Response):
@@ -255,7 +258,7 @@ class Gone(Response):
     resource should be purged. Upon receiving a 410 status code, the client
     should not request the resource again in the future.
     """
-    default_status = 410
+    status = 410
 
 
 class PreconditionFailed(Response):
@@ -268,7 +271,7 @@ class PreconditionFailed(Response):
     A 412 response indicates that those conditions were not met, so instead of
     carrying out the request, the API sends this status code.
     """
-    default_status = 412
+    status = 412
 
 
 class UnsupportedMediaType(Response):
@@ -282,7 +285,7 @@ class UnsupportedMediaType(Response):
     will receive a 415 response if the API is only willing to process data
     formatted as application/json.
     """
-    default_status = 415
+    status = 415
 
 
 class TooManyRequests(Response):
@@ -291,7 +294,7 @@ class TooManyRequests(Response):
     The user has sent too many requests in a given amount of time.
     Intended for use with rate limiting schemes.
     """
-    default_status = 429
+    status = 429
 
 
 class InternalServerError(Response):
@@ -305,7 +308,7 @@ class InternalServerError(Response):
     the client to retry the exact same request that triggered this response,
     and hope to get a different response.
     """
-    default_status = 500
+    status = 500
 
 
 class NotImplemented(Response):
@@ -314,4 +317,4 @@ class NotImplemented(Response):
     The server either does not recognise the request method, or it lacks the
     ability to fulfill the request.
     """
-    default_status = 501
+    status = 501
