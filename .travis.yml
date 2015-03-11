@@ -1,0 +1,17 @@
+language: python
+
+sudo: false
+
+python:
+  - 3.4
+  - 3.3
+
+install:
+  - pip install werkzeug coveralls flake8
+
+before_script:
+  - flake8 taiga
+
+script: nosetests --with-coverage --cover-package=taiga
+
+after_success: coveralls
