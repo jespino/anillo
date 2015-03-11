@@ -10,8 +10,8 @@ install:
   - pip install werkzeug coveralls flake8
 
 before_script:
-  - flake8 taiga
+  - flake8 anillo
 
-script: nosetests --with-coverage --cover-package=taiga
+script: nosetests --with-coverage --cover-package=anillo
 
 after_success: coveralls
