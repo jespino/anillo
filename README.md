@@ -2,6 +2,7 @@
 
 [![Build Status](http://img.shields.io/travis/jespino/anillo.svg?branch=master)](https://travis-ci.org/jespino/anillo)
 [![Coveralls Status](http://img.shields.io/coveralls/jespino/anillo/master.svg)](https://coveralls.io/r/jespino/anillo)
+[![Development Status](https://pypip.in/status/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
 [![Latest Version](https://pypip.in/version/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
 [![Supported Python versions](https://pypip.in/py_versions/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
 [![License](https://pypip.in/license/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
