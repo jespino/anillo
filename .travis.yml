@@ -7,7 +7,7 @@ python:
   - 3.3
 
 install:
-  - pip install werkzeug coverage coveralls py.test
+  - pip install werkzeug coverage coveralls pytest
 
 script:
   - coverage run --source=anillo -m py.test -v --tb=native
