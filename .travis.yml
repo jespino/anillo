@@ -7,11 +7,10 @@ python:
   - 3.3
 
 install:
-  - pip install werkzeug coveralls flake8
+  - pip install werkzeug coverage coveralls py.test
 
-before_script:
-  - flake8 anillo
+script:
+  - coverage run --source=anillo -m py.test -v --tb=native
 
-script: nosetests --with-coverage --cover-package=anillo
-
-after_success: coveralls
+after_success:
+  - coveralls
