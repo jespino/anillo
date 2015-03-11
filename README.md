@@ -22,6 +22,10 @@ object).
 You can build middlewares writing decorators, and decorating your handlers or
 the router handler, if you want to affect everything.
 
+## Routes handling
+
+Anillo comes with a route handler based on Werkzeug Router.
+
 ## Examples
 
 ### Basic example
