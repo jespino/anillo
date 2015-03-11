@@ -1,5 +1,6 @@
+from anillo.utils import to_unicode
+
 from werkzeug.http import dump_cookie
-from werkzeug._compat import to_unicode
 from werkzeug._internal import _cookie_parse_impl
 
 

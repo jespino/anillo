@@ -1,4 +1,4 @@
-from werkzeug._compat import wsgi_decoding_dance
+from anillo.utils import wsgi_decoding_dance
 from werkzeug.wsgi import get_input_stream
 
 
