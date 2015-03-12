@@ -2,7 +2,7 @@ class Response(dict):
     def __init__(self, body=None, status=None, headers=None, **kwargs):
         super().__init__({
             "body": body,
-            "status": status,
+            "status": status if status is not None else self.status,
             "headers": headers if headers is not None else {}
         })
         self.update(**kwargs)

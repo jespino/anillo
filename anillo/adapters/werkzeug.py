@@ -17,7 +17,7 @@ class WerkzeugAdapter(WsgiAdapter):
             server_port=environ.get('SERVER_PORT', None),
             server_name=environ.get('SERVER_NAME', None),
             remote_addr=werkzeug_request.remote_addr,
-            uri=werkzeug_request.url,
+            uri=werkzeug_request.path,
             script_name=werkzeug_request.script_root,
             query_string=werkzeug_request.query_string,
             scheme=werkzeug_request.scheme,
@@ -28,4 +28,4 @@ class WerkzeugAdapter(WsgiAdapter):
         return request
 
     def from_response(self, response):
-        return WerkzeugResponse(response.body, status=response.status, headers=response.headers)
+        return WerkzeugResponse(response['body'], status=response['status'], headers=response['headers'])
