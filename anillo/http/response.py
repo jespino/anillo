@@ -1,9 +1,16 @@
+from copy import deepcopy
+
+
 class Response(dict):
+    body = None
+    status = None
+    headers = {}
+
     def __init__(self, body=None, status=None, headers=None, **kwargs):
         super().__init__({
-            "body": body,
+            "body": body if body is not None else self.body,
             "status": status if status is not None else self.status,
-            "headers": headers if headers is not None else {}
+            "headers": headers if headers is not None else deepcopy(self.headers)
         })
         self.update(**kwargs)
         self.__dict__ = self

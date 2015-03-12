@@ -59,7 +59,7 @@ class Map(WerkzeugMap):
         path_info = request.uri
         return Map.bind(self, server_name, request.script_name,
                         subdomain, request.scheme,
-                        request.request_method, path_info,
+                        request.method, path_info,
                         query_args=request.query_string)
 
 

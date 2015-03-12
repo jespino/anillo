@@ -21,7 +21,7 @@ class WerkzeugAdapter(WsgiAdapter):
             script_name=werkzeug_request.script_root,
             query_string=werkzeug_request.query_string,
             scheme=werkzeug_request.scheme,
-            request_method=werkzeug_request.method,
+            method=werkzeug_request.method,
             headers=dict(werkzeug_request.headers),
             body=get_input_stream(environ).read()
         )

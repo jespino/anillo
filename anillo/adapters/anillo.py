@@ -43,7 +43,7 @@ class AnilloAdapter(WsgiAdapter):
             script_name=wsgi_decoding_dance(environ.get('SCRIPT_NAME', ''), 'utf-8'),
             query_string=environ.get('QUERY_STRING', '').encode('latin1'),
             scheme=environ.get('wsgi.url_scheme', None),
-            request_method=environ.get('REQUEST_METHOD', "").upper(),
+            method=environ.get('REQUEST_METHOD', "").upper(),
             headers=self._get_wsgi_headers(environ),
             body=get_input_stream(environ).read()
         )
