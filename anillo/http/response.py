@@ -1,6 +1,3 @@
-from werkzeug.wrappers import BaseResponse
-
-
 class Response(dict):
     def __init__(self, body=None, status=None, headers=None, **kwargs):
         super().__init__({
@@ -10,14 +7,6 @@ class Response(dict):
         })
         self.update(**kwargs)
         self.__dict__ = self
-
-
-class WerkzeugResponse(BaseResponse):
-    pass
-
-
-def response_to_werkzeug_response(response):
-    return WerkzeugResponse(response.body, status=response.status, headers=response.headers)
 
 
 class Ok(Response):

@@ -1,12 +1,12 @@
-from anillo.http import environ_to_request, response_to_werkzeug_response
+from anillo.adapters.werkzeug import WerkzeugAdapter
 
 
-def application(handler, request_func=environ_to_request):
+def application(handler, adapter=WerkzeugAdapter()):
     def wrapper(environ, start_response):
-        request = request_func(environ)
+        request = adapter.to_request(environ)
         response = handler(request)
-        werkzeug_response = response_to_werkzeug_response(response)
-        return werkzeug_response(environ, start_response)
+        response_func = adapter.from_response(response)
+        return response_func(environ, start_response)
     return wrapper
 
 
