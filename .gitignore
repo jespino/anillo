@@ -4,4 +4,7 @@ __pycache__
 *.egg-info
 *.swp
 *~
-dist
+\#*\#
+.\#*
+/dist
+/doc/index.html
