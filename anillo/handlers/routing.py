@@ -18,12 +18,17 @@ This is a little example on how you can define routes:
   ]
 """
 
-from werkzeug.routing import Map as WerkzeugMap, Rule, Submount, RequestRedirect
+from werkzeug.routing import Map as WerkzeugMap, Rule as WerkzeugRule, Submount, RequestRedirect
 from werkzeug.exceptions import NotFound, MethodNotAllowed
 from werkzeug.utils import redirect
 
 import anillo.http as http
 
+
+class Rule(WerkzeugRule):
+    def __init__(self, *args, **kwargs):
+        self.handler = kwargs.pop('handler', None)
+        super().__init__(*args, **kwargs)
 
 class Map(WerkzeugMap):
     def bind_to_request(self, request, server_name=None, subdomain=None):
@@ -64,7 +69,7 @@ class Map(WerkzeugMap):
 
 
 def url(match, handler=None, methods=None, defaults=None,
-        redirect_to=None, build_only=False, **kwargs):
+        redirect_to=None, build_only=False, name=None, **kwargs):
     """Simple helper for build a url, and return anillo
     url spec hash map (dictionary)
 
@@ -93,10 +98,18 @@ def url(match, handler=None, methods=None, defaults=None,
             "methods": methods,
             "defaults": defaults,
             "redirect_to": redirect_to,
-            "build_only": build_only}
+            "build_only": build_only,
+            "name": name}
 
     rule.update(kwargs)
     return rule
+
+
+def reverse(specs, name, **kwargs):
+    absolute_url = kwargs.pop('absolute_url', '')
+    urlmapping = _build_urlmapping(specs)
+    urls = urlmapping.bind(absolute_url)
+    return urls.build(name, kwargs)
 
 
 def context(match, urls):
@@ -123,8 +136,8 @@ def _build_rules(specs):
         else:
             rulespec = spec.copy()
             match = rulespec.pop("match")
-            handler = rulespec.pop("handler")
-            yield Rule(match, endpoint=handler, **rulespec)
+            name = rulespec.pop("name")
+            yield Rule(match, endpoint=name, **rulespec)
 
 
 def _build_urlmapping(urls, strict_slashes=False, **kwargs):
@@ -159,11 +172,11 @@ def router(specs, match_error=default_match_error_handler, **kwargs):
     def handler(request):
         urls = urlmapping.bind_to_request(request)
         try:
-            endpoint, args = urls.match()
+            rule, args = urls.match(return_rule=True)
         except Exception as exc:
             return match_error(exc)
         else:
-            return endpoint(request, **args)
+            return rule.handler(request, **args)
 
     return handler
 
