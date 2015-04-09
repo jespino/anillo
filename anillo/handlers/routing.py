@@ -18,7 +18,7 @@ This is a little example on how you can define routes:
   ]
 """
 
-from werkzeug.routing import Map as WerkzeugMap, Rule as WerkzeugRule, Submount, RequestRedirect
+from werkzeug.routing import Map as WerkzeugMap, Rule as WerkzeugRule, RuleFactory, RequestRedirect
 from werkzeug.exceptions import NotFound, MethodNotAllowed
 from werkzeug.utils import redirect
 
@@ -29,6 +29,19 @@ class Rule(WerkzeugRule):
     def __init__(self, *args, **kwargs):
         self.handler = kwargs.pop('handler', None)
         super().__init__(*args, **kwargs)
+
+
+class Context(RuleFactory):
+    def __init__(self, path, rules):
+        self.path = path.rstrip('/')
+        self.rules = rules
+
+    def get_rules(self, map):
+        for rulefactory in self.rules:
+            for rule in rulefactory.get_rules(map):
+                rule.rule = self.path + rule.rule
+                yield rule
+
 
 class Map(WerkzeugMap):
     def bind_to_request(self, request, server_name=None, subdomain=None):
@@ -132,7 +145,7 @@ def _build_rules(specs):
     """
     for spec in specs:
         if "context" in spec:
-            yield Submount(spec["context"], list(_build_rules(spec.get("routes", []))))
+            yield Context(spec["context"], list(_build_rules(spec.get("routes", []))))
         else:
             rulespec = spec.copy()
             match = rulespec.pop("match")

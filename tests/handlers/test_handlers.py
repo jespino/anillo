@@ -39,11 +39,11 @@ class TestRequest(Request):
 
 
 urls = [
-    url("/", handler1, methods=["get", "post"]),
-    url("/<int:id>", handler2, methods="get"),
+    url("/", handler1, methods=["get", "post"], name="handler1"),
+    url("/<int:id>", handler2, methods="get", name="handler2"),
     context("/test", [
-        url("/", handler3, methods=["get", "post"]),
-        url("/<int:id>", handler4, methods=["get", "post"]),
+        url("/", handler3, methods=["get", "post"], name="handler3"),
+        url("/<int:id>", handler4, methods=["get", "post"], name="handler4"),
     ])
 ]
 
