@@ -11,7 +11,7 @@
 
 from anillo.middlewares.params import form_params_middleware, get_params_middleware
 from anillo.http.request import Request
-from anillo.http.response import Response
+from anillo.http.responses import Response
 
 
 @get_params_middleware

@@ -12,7 +12,7 @@
 from anillo.middlewares.cookies import cookies_middleware
 from anillo.middlewares.session import session_middleware, MemoryStorage
 from anillo.http.request import Request
-from anillo.http.response import Response
+from anillo.http.responses import Response
 
 
 @cookies_middleware

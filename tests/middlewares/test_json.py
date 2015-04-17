@@ -11,7 +11,7 @@
 
 from anillo.middlewares.json import json_middleware
 from anillo.http.request import Request
-from anillo.http.response import Response
+from anillo.http.responses import Response
 
 
 @json_middleware

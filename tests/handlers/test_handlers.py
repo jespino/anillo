@@ -11,7 +11,7 @@
 
 from anillo.handlers.routing import router, url, context
 from anillo.http.request import Request
-from anillo.http.response import Response
+from anillo.http.responses import Response
 
 
 def handler1(request):

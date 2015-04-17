@@ -11,7 +11,7 @@
 
 from anillo.middlewares.default_headers import default_headers_middleware
 from anillo.http.request import Request
-from anillo.http.response import Response
+from anillo.http.responses import Response
 
 
 @default_headers_middleware({"in-test": "in-test-value"}, {"out-test": "out-test-value"})
