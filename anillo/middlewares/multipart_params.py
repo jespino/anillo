@@ -1,6 +1,5 @@
-import json
-from urllib.parse import parse_qs
-from cgi import parse_multipart, parse_header
+from cgi import parse_header
+from multipart import MultipartParser
 from io import BytesIO
 
 
@@ -10,12 +9,12 @@ def multipart_params_middleware(func):
         if ctype == "multipart/form-data":
             if isinstance(pdict['boundary'], str):
                 pdict['boundary'] = pdict['boundary'].encode()
-            post_data = parse_multipart(BytesIO(request.body), pdict)
+            mp = MultipartParser(BytesIO(request.body), pdict['boundary'])
             request.multipart_params = {}
-            for key, value in post_data.items():
-                if len(value) == 1:
-                    request.multipart_params[key] = value[0]
-                else:
-                    request.multipart_params[key] = value
+            for part in mp:
+                request.multipart_params[part.name] = {
+                    "filename": part.filename,
+                    "value": part.value,
+                }
         return func(request)
     return wrapper

@@ -16,6 +16,7 @@ setup(
     packages=['anillo'],
     install_requires=[
         'werkzeug',
+        'multipart',
     ],
     setup_requires=[
         'versiontools >= 1.9.1',

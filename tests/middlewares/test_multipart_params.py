@@ -29,15 +29,17 @@ Content-Disposition: form-data; name=test1
 
 test-value1
 ----test
-Content-Disposition: form-data; name=test2
+Content-Disposition: form-data; name=test2; filename=test-filename
 
 test-value2
-----test--""",
+----test--
+
+""",
         headers={"Content-Type": "multipart/form-data; boundary=--test"}
     )
     multipart_app(request)
     assert "test1" in request.multipart_params
-    assert request.multipart_params["test1"] == b"test-value1"
+    assert request.multipart_params["test1"] == {"filename": None, "value": "test-value1"}
     assert "test2" in request.multipart_params
-    assert request.multipart_params["test2"] == b"test-value2"
+    assert request.multipart_params["test2"] == {"filename": "test-filename", "value": "test-value2"}
     assert "test3" not in request.multipart_params
