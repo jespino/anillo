@@ -11,7 +11,6 @@ def multipart_params_middleware(func):
             if isinstance(pdict['boundary'], str):
                 pdict['boundary'] = pdict['boundary'].encode()
             post_data = parse_multipart(BytesIO(request.body), pdict)
-            print(post_data)
             request.multipart_params = {}
             for key, value in post_data.items():
                 if len(value) == 1:
