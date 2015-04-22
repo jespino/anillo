@@ -39,7 +39,9 @@ test-value2
     )
     multipart_app(request)
     assert "test1" in request.multipart_params
-    assert request.multipart_params["test1"] == {"filename": None, "value": "test-value1"}
+    assert request.multipart_params["test1"]['filename'] == None
+    assert request.multipart_params["test1"]['file'].read() == b"test-value1"
     assert "test2" in request.multipart_params
-    assert request.multipart_params["test2"] == {"filename": "test-filename", "value": "test-value2"}
+    assert request.multipart_params["test2"]['filename'] == "test-filename"
+    assert request.multipart_params["test2"]['file'].read() == b"test-value2"
     assert "test3" not in request.multipart_params

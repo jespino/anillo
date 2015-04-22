@@ -14,7 +14,7 @@ def multipart_params_middleware(func):
             for part in mp:
                 request.multipart_params[part.name] = {
                     "filename": part.filename,
-                    "value": part.value,
+                    "file": part.file,
                 }
         return func(request)
     return wrapper
