@@ -51,6 +51,15 @@ def test_parse_json_content():
     assert response.body == "test value"
 
 
+def test_parse_json_content_with_charset():
+    request = Request()
+    request.body = b'{"test": "test value"}'
+    request.method = "POST"
+    request.headers = {"Content-Type": "application/json; charset=UTF-8"}
+    response = json_app1(request)
+    assert response.body == "test value"
+
+
 def test_return_json_content():
     request = Request()
     response = json_app2(request)
@@ -70,3 +79,4 @@ def test_no_return_json_content_with_bad_content_type():
     request = Request()
     response = json_app4(request)
     assert response.body == {"test": "test value"}
+
