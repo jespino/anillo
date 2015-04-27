@@ -8,8 +8,9 @@ def json_middleware(func):
         if ctype == "application/json":
             request.body = json.loads(request.body.decode("utf-8")) if request.body else None
         response = func(request)
-        ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
-        if ctype == "application/json":
-            response.body = json.dumps(response.body) if response.body else '{}'
+        if "Content-Type" in response.headers and response.headers['Content-Type'] is not None:
+            ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
+            if ctype == "application/json":
+                response.body = json.dumps(response.body) if response.body else '{}'
         return response
     return wrapper
