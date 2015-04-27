@@ -1,10 +1,12 @@
 import json
 from urllib.parse import parse_qs
+from cgi import parse_header
 
 
 def form_params_middleware(func):
     def wrapper(request):
-        if request.headers.get("Content-Type", '') == "application/x-www-form-urlencoded":
+        ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
+        if ctype == "application/x-www-form-urlencoded":
             request.form_params = {}
             for key, value in parse_qs(request.body.decode("utf-8")).items():
                 if len(value) == 1:
