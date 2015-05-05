@@ -41,6 +41,12 @@ def json_app4(request):
                         headers={"Content-Type": "text/plain"})
     return response
 
+@json_middleware
+def json_app5(request):
+    response = Response("not-dict-or-list-value",
+                        headers={"Content-Type": "text/plain"})
+    return response
+
 
 def test_parse_json_content():
     request = Request()
@@ -80,3 +86,7 @@ def test_no_return_json_content_with_bad_content_type():
     response = json_app4(request)
     assert response.body == {"test": "test value"}
 
+def test_no_convert_the_json_content_not_list_or_dict_content():
+    request = Request()
+    response = json_app5(request)
+    assert response.body == "not-dict-or-list-value"
