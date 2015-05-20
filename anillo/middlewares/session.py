@@ -1,25 +1,18 @@
 import uuid
 
-
 def session_middleware(storage):
     def middleware(func):
         def wrapper(request):
-            session_id = request.cookies.get('session-id', {}).get('value', None)
+            session_key = storage.get_session_key(request)
 
-            if session_id is None:
-                session_id = uuid.uuid4().hex
-
-            request.session = storage.retrieve(session_id)
+            request.session = storage.retrieve(request, session_key)
 
             response = func(request)
 
-            storage.store(session_id, request.session)
+            storage.store(request, response, session_key, request.session)
 
-            if request.cookies.get('session-id', {}).get('value', None) is None:
-                if hasattr(response, 'cookies'):
-                    response.cookies['session-id'] = {"value": session_id}
-                else:
-                    response.cookies = {'session-id': {"value": session_id}}
+            storage.persist_session_key(request, response, session_key)
+
             return response
         return wrapper
     return middleware
@@ -28,8 +21,24 @@ def session_middleware(storage):
 class MemoryStorage:
     data = {}
 
-    def store(self, uuid, data):
-        self.data[uuid] = data
+    def __init__(self, cookie_name="session-id"):
+        self.cookie_name = cookie_name
 
-    def retrieve(self, uuid):
-        return self.data.get(uuid, {})
+    def get_session_key(self, request):
+        session_key = request.cookies.get(self.cookie_name, {}).get('value', None)
+        if session_key is None:
+            return uuid.uuid4().hex
+        return session_key
+
+    def persist_session_key(self, request, response, session_key):
+        if request.cookies.get(self.cookie_name, {}).get('value', None) is None:
+            if hasattr(response, 'cookies'):
+                response.cookies[self.cookie_name] = {"value": session_key}
+            else:
+                response.cookies = {self.cookie_name: {"value": session_key}}
+
+    def store(self, request, response, session_key, data):
+        self.data[session_key] = data
+
+    def retrieve(self, request, session_key):
+        return self.data.get(session_key, {})
