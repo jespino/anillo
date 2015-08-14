@@ -16,7 +16,7 @@ def json_middleware(func):
     return wrapper
 
 
-def json_encoder_middleware(encoder)
+def json_encoder_middleware(encoder):
     def middleware(func):
         def wrapper(request):
             ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
