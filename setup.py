@@ -15,8 +15,8 @@ setup(
     license = "BSD",
     packages = find_packages(),
     install_requires=[
-        'multipart',
-        "werkzeug",
+        "werkzeug>=0.10.4",
+        "multipart>=0.1",
     ],
     classifiers=[
         "Programming Language :: Python",
