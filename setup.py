@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = "anillo",
@@ -13,7 +13,7 @@ setup(
     author_email = "jespinog@gmail.com",
     url = "https://github.com/jespino/anillo",
     license = "BSD",
-    packages = ["anillo"],
+    packages = find_packages(),
     install_requires=[
         'multipart',
         "werkzeug",
