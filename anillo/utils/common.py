@@ -1,5 +1,5 @@
-import functools
 import sys
+import functools
 
 
 def chain(*args):
@@ -19,3 +19,12 @@ def to_unicode(x, charset=sys.getdefaultencoding(), errors='strict',
     if charset is None and allow_none_charset:
         return x
     return x.decode(charset, errors)
+
+
+def merge_dicts(*dict_args):
+    result = {}
+    for dictionary in dict_args:
+        if not dictionary:
+            continue
+        result.update(dictionary)
+    return result
