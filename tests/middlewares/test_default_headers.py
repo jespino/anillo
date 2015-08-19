@@ -9,12 +9,12 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from anillo.middlewares.default_headers import default_headers_middleware
+from anillo.middlewares.default_headers import wrap_default_headers
 from anillo.http.request import Request
 from anillo.http.responses import Response
 
 
-@default_headers_middleware({"in-test": "in-test-value"}, {"out-test": "out-test-value"})
+@wrap_default_headers({"in-test": "in-test-value"}, {"out-test": "out-test-value"})
 def session_app(request):
     if request.headers['in-test'] == "in-test-other-value":
         return Response(headers={"out-test": "out-test-other-value"})

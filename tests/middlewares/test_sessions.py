@@ -9,14 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from anillo.middlewares.cookies import cookies_middleware
-from anillo.middlewares.session import session_middleware, MemoryStorage
+from anillo.middlewares.cookies import wrap_cookies
+from anillo.middlewares.session import wrap_session
 from anillo.http.request import Request
 from anillo.http.responses import Response
 
 
-@cookies_middleware
-@session_middleware(MemoryStorage())
+@wrap_cookies
+@wrap_session
 def session_app(request):
     request.session["test"] = request.session.get("test", 0) + 1
     response = Response(request.session["test"])
