@@ -21,7 +21,7 @@ def _parse_cookie(header, charset='utf-8', errors='replace'):
     return dict(_parse_pairs())
 
 
-def cookies_middleware(func):
+def wrap_cookies(func):
     def wrapper(request):
         request.cookies = _parse_cookie(request.headers.get('Cookie', 'No Cookie'))
         response = func(request)
