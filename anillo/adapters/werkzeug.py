@@ -30,4 +30,4 @@ class WerkzeugAdapter(WsgiAdapter):
         return request
 
     def from_response(self, response):
-        return WerkzeugResponse(response['body'], status=response['status'], headers=response['headers'])
+        return WerkzeugResponse(response['body'], status=response['status'], headers=dict(response['headers']))
