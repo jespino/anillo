@@ -1,7 +1,7 @@
 from anillo.http import responses
 from werkzeug.debug.tbtools import get_current_traceback
 
-def exception_handler_middleware(render_function=None, content_type="text/html"):
+def wrap_exception_handler(render_function=None, content_type="text/html"):
     if render_function is None:
         render_function = lambda tb: tb.render_full()
 

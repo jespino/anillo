@@ -1,4 +1,4 @@
-def default_headers_middleware(in_headers, out_headers):
+def wrap_default_headers(in_headers, out_headers):
     def middleware(func):
         def wrapper(request):
             for header, value in in_headers.items():

@@ -1,28 +1,11 @@
 import uuid
-
-def session_middleware(storage):
-    def middleware(func):
-        def wrapper(request):
-            session_key = storage.get_session_key(request)
-
-            request.session = storage.retrieve(request, session_key)
-
-            response = func(request)
-
-            storage.store(request, response, session_key, request.session)
-
-            storage.persist_session_key(request, response, session_key)
-
-            return response
-        return wrapper
-    return middleware
+import functools
 
 
 class MemoryStorage:
-    data = {}
-
     def __init__(self, cookie_name="session-id"):
         self.cookie_name = cookie_name
+        self.data = {}
 
     def get_session_key(self, request):
         session_key = request.cookies.get(self.cookie_name, {}).get('value', None)
@@ -42,3 +25,35 @@ class MemoryStorage:
 
     def retrieve(self, request, session_key):
         return self.data.get(session_key, {})
+
+
+def wrap_session(func=None, *, storage=MemoryStorage):
+    """
+    A middleware that adds the session management to the
+    request.
+
+    This middleware optionally accepts a `storage` keyword
+    only parameter for provide own session storage
+    implementation. If it is not provided, the in memory
+    session storage will be used.
+
+    :param storage: A storage factory/constructor.
+    :type storage: callable or class
+    """
+
+    if func is None:
+        return functools.partial(func, storage=storage)
+
+    # Initialize the storage
+    storage = storage()
+
+    def wrapper(request):
+        session_key = storage.get_session_key(request)
+        request.session = storage.retrieve(request, session_key)
+        response = func(request)
+
+        storage.store(request, response, session_key, request.session)
+        storage.persist_session_key(request, response, session_key)
+        return response
+
+    return wrapper

@@ -1,4 +1,4 @@
-from anillo.utils import wsgi_decoding_dance
+from anillo.utils.common import wsgi_decoding_dance
 from anillo.http.request import Request
 from werkzeug.wsgi import get_input_stream
 from werkzeug.wrappers import BaseResponse

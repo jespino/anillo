@@ -1,4 +1,5 @@
-from copy import deepcopy
+from anillo.utils.structures import CaseInsensitiveDict
+from anillo.utils.common import merge_dicts
 
 
 class Response(dict):
@@ -10,7 +11,7 @@ class Response(dict):
         super().__init__({
             "body": body if body is not None else self.body,
             "status": status if status is not None else self.status,
-            "headers": headers if headers is not None else deepcopy(self.headers)
+            "headers": CaseInsensitiveDict(merge_dicts(self.headers, headers)),
         })
         self.update(**kwargs)
         self.__dict__ = self
