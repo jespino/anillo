@@ -44,9 +44,6 @@ def wrap_session(func=None, *, storage=MemoryStorage):
     if func is None:
         return functools.partial(wrap_session, storage=storage)
 
-    # Initialize the storage
-    storage = storage()
-
     def wrapper(request):
         session_key = storage.get_session_key(request)
         request.session = storage.retrieve(request, session_key)
