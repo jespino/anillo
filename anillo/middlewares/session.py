@@ -27,7 +27,7 @@ class MemoryStorage:
         return self.data.get(session_key, {})
 
 
-def wrap_session(func=None, *, storage=MemoryStorage):
+def wrap_session(func=None, *, storage=MemoryStorage()):
     """
     A middleware that adds the session management to the
     request.
