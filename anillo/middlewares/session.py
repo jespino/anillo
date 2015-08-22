@@ -42,7 +42,7 @@ def wrap_session(func=None, *, storage=MemoryStorage):
     """
 
     if func is None:
-        return functools.partial(func, storage=storage)
+        return functools.partial(wrap_session, storage=storage)
 
     # Initialize the storage
     storage = storage()
