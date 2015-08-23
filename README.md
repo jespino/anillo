@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
 ```python
 from anillo.app import application
-from anillo.utils import chain
+from anillo.utils.common import chain
 from anillo.http import Ok
 
 

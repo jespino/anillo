@@ -1,9 +1,9 @@
 from anillo.app import application
-from anillo.utils import chain
+from anillo.utils.common import chain
 from anillo.http import Ok
-from anillo.middlewares.session import session_middleware, MemoryStorage
-from anillo.middlewares.json import json_middleware
-from anillo.middlewares.cookies import cookies_middleware
+from anillo.middlewares.session import wrap_session, MemoryStorage
+from anillo.middlewares.json import wrap_json
+from anillo.middlewares.cookies import wrap_cookies
 
 
 def index(request):
@@ -13,9 +13,9 @@ def index(request):
 
 
 app = application(chain(
-    json_middleware,
-    cookies_middleware,
-    session_middleware(MemoryStorage()),
+    wrap_json,
+    wrap_cookies,
+    wrap_session(storage=MemoryStorage),
     index,
 ))
 
