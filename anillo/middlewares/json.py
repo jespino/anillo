@@ -28,7 +28,7 @@ def wrap_json(func=None, *, encoder=json.JSONEncoder):
         if "Content-Type" in response.headers and response.headers['Content-Type'] is not None:
             ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
             if ctype == "application/json" and (isinstance(response.body, dict) or isinstance(response.body, list)):
-                response.body = json.dumps(response.body, cls=encoder) if response.body else '{}'
+                response.body = json.dumps(response.body, cls=encoder)
         return response
     return wrapper
 
