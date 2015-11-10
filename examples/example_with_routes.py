@@ -12,7 +12,7 @@ def hello(request):
 
 urls = [
     url("/", index),
-    url("/hello", hello),
+    url("/hello", hello, methods=["get"]),
 ]
 
 app = application(router(urls))
