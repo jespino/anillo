@@ -1,6 +1,6 @@
 import functools
 
-def wrap_cors_response(
+def wrap_cors(
     func=None,
     *,
     allow_origin='*',
