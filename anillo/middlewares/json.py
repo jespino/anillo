@@ -20,11 +20,11 @@ def wrap_json(func=None, *, encoder=json.JSONEncoder):
         return functools.partial(wrap_json, encoder=encoder)
 
     @functools.wraps(func)
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
         if ctype == "application/json":
             request.body = json.loads(request.body.decode("utf-8")) if request.body else None
-        response = func(request)
+        response = func(request, *args, **kwargs)
         if "Content-Type" in response.headers and response.headers['Content-Type'] is not None:
             ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
             if ctype == "application/json" and (isinstance(response.body, dict) or isinstance(response.body, list)):
@@ -41,11 +41,11 @@ def wrap_json_body(func):
     """
 
     @functools.wraps(func)
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
         if ctype == "application/json":
             request.body = json.loads(request.body.decode("utf-8")) if request.body else None
-        return func(request)
+        return func(request, *args, **kwargs)
     return wrapper
 
 
@@ -56,11 +56,11 @@ def wrap_json_params(func):
     """
 
     @functools.wraps(func)
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
         if ctype == "application/json":
             request.params = json.loads(request.body.decode("utf-8")) if request.body else None
-        return func(request)
+        return func(request, *args, **kwargs)
     return wrapper
 
 
@@ -77,8 +77,8 @@ def wrap_json_response(func=None, *, encoder=json.JSONEncoder):
         return functools.partial(wrap_json, encoder=encoder)
 
     @functools.wraps(func)
-    def wrapper(request):
-        response = func(request)
+    def wrapper(request, *args, **kwargs):
+        response = func(request, *args, **kwargs)
 
         if not response.body:
             return response

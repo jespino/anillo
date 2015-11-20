@@ -16,7 +16,7 @@ def wrap_form_params(func):
     """
 
     @functools.wraps(func)
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
         if ctype == "application/x-www-form-urlencoded":
             params = {}
@@ -28,7 +28,7 @@ def wrap_form_params(func):
 
             request.params = merge_dicts(getattr(request, "params", None), params)
             request.form_params = params
-        return func(request)
+        return func(request, *args, **kwargs)
     return wrapper
 
 
@@ -42,7 +42,7 @@ def wrap_query_params(func):
     """
 
     @functools.wraps(func)
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         params = {}
         for key, value in parse_qs(request.query_string.decode("utf-8")).items():
             if len(value) == 1:
@@ -52,5 +52,5 @@ def wrap_query_params(func):
 
         request.params = merge_dicts(getattr(request, "params", None), params)
         request.query_params = params
-        return func(request)
+        return func(request, *args, **kwargs)
     return wrapper

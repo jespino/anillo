@@ -22,9 +22,9 @@ def _parse_cookie(header, charset='utf-8', errors='replace'):
 
 
 def wrap_cookies(func):
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         request.cookies = _parse_cookie(request.headers.get('Cookie', 'No Cookie'))
-        response = func(request)
+        response = func(request, *args, **kwargs)
         if hasattr(response, 'cookies'):
             cookies_strings = []
             for key, value in response.cookies.items():

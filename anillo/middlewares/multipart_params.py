@@ -14,7 +14,7 @@ def wrap_multipart_params(func):
     `params` attribute in same way as `wrap_form_params` is doing.
     """
 
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
         if ctype == "multipart/form-data":
 
@@ -32,5 +32,5 @@ def wrap_multipart_params(func):
             request.params = merge_dicts(getattr(request, "params", None), params)
             request.multipart_params = params
 
-        return func(request)
+        return func(request, *args, **kwargs)
     return wrapper

@@ -47,10 +47,10 @@ def wrap_session(func=None, *, storage=MemoryStorage):
     # Initialize the storage
     storage = storage()
 
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         session_key = storage.get_session_key(request)
         request.session = storage.retrieve(request, session_key)
-        response = func(request)
+        response = func(request, *args, **kwargs)
 
         storage.store(request, response, session_key, request.session)
         storage.persist_session_key(request, response, session_key)
