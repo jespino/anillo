@@ -1,10 +1,8 @@
 import functools
 
-def wrap_cors(
-    func=None,
-    *,
-    allow_origin='*',
-    allow_headers=set(["Origin", "X-Requested-With", "Content-Type", "Accept"])):
+DEFAULT_HEADERS = frozenset(["origin", "x-requested-with", "content-type", "accept"])):
+
+def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
     """
     A middleware that allow CORS calls, by adding the
     headers Access-Control-Allow-Origin and Access-Control-Allow-Headers.
