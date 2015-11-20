@@ -12,6 +12,11 @@ def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
     respectively.
     """
 
+    if func is None:
+        return functools.partial(wrap_cors,
+                                 allow_origin=allow_origin,
+                                 allow_headers=allow_headers)
+
     _allow_headers = ", ".join(allow_headers)
 
     @functools.wraps(func)
