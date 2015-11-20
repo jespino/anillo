@@ -12,6 +12,8 @@ def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
     respectively.
     """
 
+    _allow_headers = ", ".join(allow_headers)
+
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         response = func(request, *args, **kwargs)
@@ -20,7 +22,7 @@ def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
             response.headers = {}
 
         response.headers['Access-Control-Allow-Origin'] = allow_origin
-        response.headers['Access-Control-Allow-Headers'] = ', '.join(allow_headers)
+        response.headers['Access-Control-Allow-Headers'] = _allow_headers
         return response
 
     return wrapper
