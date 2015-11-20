@@ -1,10 +1,8 @@
 import functools
 
-def wrap_cors_response(
-    func=None,
-    *,
-    allow_origin='*',
-    allow_headers=set(["Origin", "X-Requested-With", "Content-Type", "Accept"])):
+DEFAULT_HEADERS = frozenset(["origin", "x-requested-with", "content-type", "accept"])):
+
+def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
     """
     A middleware that allow CORS calls, by adding the
     headers Access-Control-Allow-Origin and Access-Control-Allow-Headers.
@@ -14,6 +12,13 @@ def wrap_cors_response(
     respectively.
     """
 
+    if func is None:
+        return functools.partial(wrap_cors,
+                                 allow_origin=allow_origin,
+                                 allow_headers=allow_headers)
+
+    _allow_headers = ", ".join(allow_headers)
+
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         response = func(request, *args, **kwargs)
@@ -22,7 +27,7 @@ def wrap_cors_response(
             response.headers = {}
 
         response.headers['Access-Control-Allow-Origin'] = allow_origin
-        response.headers['Access-Control-Allow-Headers'] = ', '.join(allow_headers)
+        response.headers['Access-Control-Allow-Headers'] = _allow_headers
         return response
 
     return wrapper
