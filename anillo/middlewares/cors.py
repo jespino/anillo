@@ -1,6 +1,6 @@
 import functools
 
-DEFAULT_HEADERS = frozenset(["origin", "x-requested-with", "content-type", "accept"])):
+DEFAULT_HEADERS = frozenset(["origin", "x-requested-with", "content-type", "accept"])
 
 def wrap_cors(func=None, *, allow_origin='*', allow_headers=DEFAULT_HEADERS):
     """

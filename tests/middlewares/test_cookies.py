@@ -32,7 +32,7 @@ def test_set_cookie_app():
     request = Request()
     response = cookie_app(request)
     assert 'Set-Cookie' in dict(response.headers)
-    assert response.headers['Set-Cookie'] == "test=test; Path=/"
+    assert response.headers['Set-Cookie'] == ["test=test; Path=/"]
 
 
 def test_no_initial_cookie():
