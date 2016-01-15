@@ -29,6 +29,6 @@ def wrap_cookies(func):
             cookies_strings = []
             for key, value in response.cookies.items():
                 cookies_strings.append(dump_cookie(key, **value))
-            response.headers['Set-Cookie'] = ",".join(cookies_strings)
+            response.headers['Set-Cookie'] = cookies_strings
         return response
     return wrapper
