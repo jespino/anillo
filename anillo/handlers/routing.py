@@ -28,6 +28,7 @@ import anillo.http as http
 class Rule(WerkzeugRule):
     def __init__(self, *args, **kwargs):
         self.handler = kwargs.pop('handler', None)
+        self.extra_data = kwargs.pop('extra_data', {})
         super().__init__(*args, **kwargs)
 
 
@@ -112,9 +113,8 @@ def url(match, handler=None, methods=None, defaults=None,
             "defaults": defaults,
             "redirect_to": redirect_to,
             "build_only": build_only,
-            "name": name}
-
-    rule.update(kwargs)
+            "name": name,
+            "extra_data": kwargs}
     return rule
 
 
@@ -189,6 +189,7 @@ def router(specs, match_error=default_match_error_handler, **kwargs):
         except Exception as exc:
             return match_error(exc)
         else:
+            request.router_rule = rule
             return rule.handler(request, **args)
 
     return handler
