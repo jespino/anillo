@@ -5,12 +5,13 @@ Parser for multipart/form-data
 
 This module provides a parser for the multipart/form-data format. It can read
 from a file, a socket or a WSGI environment. The parser can be used to replace
-cgi.FieldStorage (without the bugs) and works with Python 2.5+ and 3.x (2to3).
+cgi.FieldStorage (without the bugs) and works with Python 3.x.
 
 Licence (MIT)
 -------------
 
     Copyright (c) 2010, Marcel Hellkamp.
+    Copyright (c) 2016, Jesús Espino.
     Inspired by the Werkzeug library: http://werkzeug.pocoo.org/
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,34 +34,24 @@ Licence (MIT)
 
 '''
 
-__author__ = 'Marcel Hellkamp'
-__version__ = '0.1'
-__license__ = 'MIT'
+import re
 
 from tempfile import TemporaryFile
 from wsgiref.headers import Headers
-import re
-try:
-    from urllib.parse import parse_qs
-except ImportError:  # pragma: no cover (fallback for Python 2.5)
-    from cgi import parse_qs
-try:
-    from io import BytesIO
-except ImportError:  # pragma: no cover (fallback for Python 2.5)
-    from io import StringIO as BytesIO
+
+from urllib.parse import parse_qs
+from io import BytesIO
+
 
 ##############################################################################
 # Helper & Misc
 ##############################################################################
 # Some of these were copied from bottle: http://bottle.paws.de/
 
-try:
-    from collections import MutableMapping as DictMixin
-except ImportError:  # pragma: no cover (fallback for Python 2.5)
-    from UserDict import DictMixin
+from collections import MutableMapping
 
 
-class MultiDict(DictMixin):
+class MultiDict(MutableMapping):
     """ A dict that remembers old values for each key """
     def __init__(self, *a, **k):
         self.dict = dict()
@@ -106,10 +97,6 @@ class MultiDict(DictMixin):
         for key, values in self.dict.items():
             for value in values:
                 yield key, value
-
-
-def tob(data, enc='utf8'):  # Convert strings to bytes (py2 and py3)
-    return data.encode(enc) if isinstance(data, str) else data
 
 
 def copy_file(stream, target, maxread=-1, buffer_size=2*16):
@@ -182,6 +169,9 @@ class MultipartParser(object):
             :param boundary: The multipart boundary as a byte string.
             :param content_length: The maximum number of bytes to read.
         '''
+        if isinstance(boundary, str):
+            boundary = boundary.encode('utf-8')
+
         self.stream, self.boundary = stream, boundary
         self.content_length = content_length
         self.disk_limit = disk_limit
@@ -227,11 +217,7 @@ class MultipartParser(object):
         '''
         read = self.stream.read
         maxread, maxbuf = self.content_length, self.buffer_size
-        _bcrnl = tob('\r\n')
-        _bcr = _bcrnl[:1]
-        _bnl = _bcrnl[1:]
-        _bempty = _bcrnl[:0]  # b'rn'[:0] -> b''
-        buffer = _bempty  # buffer for the last (partial) line
+        buffer = b''  # buffer for the last (partial) line
         while 1:
             data = read(maxbuf if maxread < 0 else min(maxbuf, maxread))
             maxread -= len(data)
@@ -240,7 +226,7 @@ class MultipartParser(object):
             # be sure that the first line does not become too big
             if len_first_line > self.buffer_size:
                 # at the same time don't split a '\r\n' accidentally
-                if (len_first_line == self.buffer_size+1 and lines[0].endswith(_bcrnl)):
+                if (len_first_line == self.buffer_size+1 and lines[0].endswith(b'\r\n')):
                     splitpos = self.buffer_size - 1
                 else:
                     splitpos = self.buffer_size
@@ -250,21 +236,21 @@ class MultipartParser(object):
                 buffer = lines[-1]
                 lines = lines[:-1]
             for line in lines:
-                if line.endswith(_bcrnl):
-                    yield line[:-2], _bcrnl
-                elif line.endswith(_bnl):
-                    yield line[:-1], _bnl
-                elif line.endswith(_bcr):
-                    yield line[:-1], _bcr
+                if line.endswith(b'\r\n'):
+                    yield line[:-2], b'\r\n'
+                elif line.endswith(b'\n'):
+                    yield line[:-1], b'\n'
+                elif line.endswith(b'\r'):
+                    yield line[:-1], b'\r'
                 else:
-                    yield line, _bempty
+                    yield line, b''
             if not data:
                 break
 
     def _iterparse(self):
         lines, line = self._lineiter(), ''
-        separator = tob('--') + tob(self.boundary)
-        terminator = tob('--') + tob(self.boundary) + tob('--')
+        separator = b'--' + self.boundary
+        terminator = b'--' + self.boundary + b'--'
         # Consume first boundary. Ignore leading blank lines
         for line, nl in lines:
             if line:
@@ -310,7 +296,7 @@ class MultipartPart(object):
         self.headers = None
         self.file = False
         self.size = 0
-        self._buf = tob('')
+        self._buf = b''
         self.disposition, self.name, self.filename = None, None, None
         self.content_type, self.charset = None, charset
         self.memfile_limit = memfile_limit
