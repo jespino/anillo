@@ -10,11 +10,13 @@ def application(handler, adapter_cls=WerkzeugAdapter):
     :rtype: callable
     """
     adapter = adapter_cls()
+
     def wrapper(environ, start_response):
         request = adapter.to_request(environ)
         response = handler(request)
         response_func = adapter.from_response(response)
         return response_func(environ, start_response)
+
     return wrapper
 
 

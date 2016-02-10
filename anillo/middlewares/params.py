@@ -1,4 +1,3 @@
-import json
 import functools
 
 from anillo.utils.common import merge_dicts
