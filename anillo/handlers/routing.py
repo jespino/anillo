@@ -88,7 +88,7 @@ def optionize(url):
     def handler(request, *args, **kwargs):
         if request.method == "OPTIONS":
             return http.Ok("", headers={
-                "Access-Control-Allow-Methods": " ".join(url['methods'])
+                "Access-Control-Allow-Methods": ",".join(url['methods'])
             })
         return real_handler(request, *args, **kwargs)
 
