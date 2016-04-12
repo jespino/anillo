@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "anillo",
-    version = "0.1.4",
+    version = "0.1.5",
     description = "Ring/compojure like nanoframework build on top of werkzeug",
     long_description = "",
     keywords = "framework, web, ring, compojure",
