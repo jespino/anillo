@@ -28,6 +28,7 @@ import anillo.http as http
 class Rule(WerkzeugRule):
     def __init__(self, *args, **kwargs):
         self.handler = kwargs.pop('handler', None)
+        self.extra_data = kwargs.pop('extra_data', {})
         super().__init__(*args, **kwargs)
 
 
@@ -81,6 +82,21 @@ class Map(WerkzeugMap):
                         query_args=request.query_string)
 
 
+def optionize(url):
+    real_handler = url['handler']
+
+    def handler(request, *args, **kwargs):
+        if request.method == "OPTIONS":
+            return http.Ok("", headers={
+                "Access-Control-Allow-Methods": ",".join(url['methods'])
+            })
+        return real_handler(request, *args, **kwargs)
+
+    url['handler'] = handler
+    url['methods'].append("OPTIONS")
+    return url
+
+
 def url(match, handler=None, methods=None, defaults=None,
         redirect_to=None, build_only=False, name=None, **kwargs):
     """Simple helper for build a url, and return anillo
@@ -112,10 +128,13 @@ def url(match, handler=None, methods=None, defaults=None,
             "defaults": defaults,
             "redirect_to": redirect_to,
             "build_only": build_only,
-            "name": name}
-
-    rule.update(kwargs)
+            "name": name,
+            "extra_data": kwargs}
     return rule
+
+
+def optionized_url(*args, **kwargs):
+    return optionize(url(*args, **kwargs))
 
 
 def reverse(specs, name, **kwargs):
@@ -189,6 +208,7 @@ def router(specs, match_error=default_match_error_handler, **kwargs):
         except Exception as exc:
             return match_error(exc)
         else:
+            request.router_rule = rule
             return rule.handler(request, **args)
 
     return handler

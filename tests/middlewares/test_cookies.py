@@ -9,12 +9,12 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from anillo.middlewares.cookies import cookies_middleware
+from anillo.middlewares.cookies import wrap_cookies
 from anillo.http.request import Request
 from anillo.http.responses import Response
 
 
-@cookies_middleware
+@wrap_cookies
 def cookie_app(request):
     response = Response(request.cookies if request.cookies else "No Cookie",
                         headers={"Content-Type": 'text/plain'},
@@ -32,7 +32,7 @@ def test_set_cookie_app():
     request = Request()
     response = cookie_app(request)
     assert 'Set-Cookie' in dict(response.headers)
-    assert response.headers['Set-Cookie'] == "test=test; Path=/"
+    assert response.headers['Set-Cookie'] == ["test=test; Path=/"]
 
 
 def test_no_initial_cookie():

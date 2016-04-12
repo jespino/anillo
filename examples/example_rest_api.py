@@ -1,7 +1,7 @@
 from anillo.app import application
 from anillo.handlers.routing import router, url, context
-from anillo.utils import chain
-from anillo.middlewares.json import json_middleware
+from anillo.utils.common import chain
+from anillo.middlewares.json import wrap_json
 from anillo.http import NotFound, NoContent, Created, Ok
 
 database = []
@@ -19,8 +19,8 @@ def detail(request, index):
 
 
 def create(request):
-    database.append(request.data)
-    return Created(request.data, mimetype="application/json")
+    database.append(request.body)
+    return Created(request.body, mimetype="application/json")
 
 
 def delete(request, index):
@@ -39,7 +39,7 @@ urls = [
     ])
 ]
 
-app = application(chain(json_middleware, router(urls)))
+app = application(chain(wrap_json, router(urls)))
 
 if __name__ == '__main__':
     from anillo import serving

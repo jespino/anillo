@@ -9,12 +9,12 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from anillo.middlewares.multipart_params import multipart_params_middleware
+from anillo.middlewares.multipart_params import wrap_multipart_params
 from anillo.http.request import Request
 from anillo.http.responses import Response
 
 
-@multipart_params_middleware
+@wrap_multipart_params
 def multipart_app(request):
     return Response()
 
@@ -39,9 +39,12 @@ test-value2
     )
     multipart_app(request)
     assert "test1" in request.multipart_params
+    assert "test1" in request.params
     assert request.multipart_params["test1"]['filename'] == None
     assert request.multipart_params["test1"]['file'].read() == b"test-value1"
     assert "test2" in request.multipart_params
+    assert "test2" in request.params
     assert request.multipart_params["test2"]['filename'] == "test-filename"
     assert request.multipart_params["test2"]['file'].read() == b"test-value2"
     assert "test3" not in request.multipart_params
+    assert "test3" not in request.params

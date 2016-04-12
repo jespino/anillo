@@ -9,35 +9,46 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from anillo.middlewares.json import json_middleware
 from anillo.http.request import Request
 from anillo.http.responses import Response
+from anillo.middlewares.json import wrap_json
+from anillo.middlewares.json import wrap_json_body
+from anillo.middlewares.json import wrap_json_params
+from anillo.middlewares.json import wrap_json_response
 
 
-@json_middleware
+# TODO: test new middlewares
+
+@wrap_json
 def json_app1(request):
     response = Response(request.body["test"],
                         headers={"Content-Type": "text/plain"})
     return response
 
 
-@json_middleware
+@wrap_json
 def json_app2(request):
     response = Response({"test": "test value"},
                         headers={"Content-Type": "application/json"})
     return response
 
 
-@json_middleware
+@wrap_json
 def json_app3(request):
     response = Response(request.body,
                         headers={"Content-Type": "text/plain"})
     return response
 
 
-@json_middleware
+@wrap_json
 def json_app4(request):
     response = Response({"test": "test value"},
+                        headers={"Content-Type": "text/plain"})
+    return response
+
+@wrap_json
+def json_app5(request):
+    response = Response("not-dict-or-list-value",
                         headers={"Content-Type": "text/plain"})
     return response
 
@@ -80,3 +91,7 @@ def test_no_return_json_content_with_bad_content_type():
     response = json_app4(request)
     assert response.body == {"test": "test value"}
 
+def test_no_convert_the_json_content_not_list_or_dict_content():
+    request = Request()
+    response = json_app5(request)
+    assert response.body == "not-dict-or-list-value"

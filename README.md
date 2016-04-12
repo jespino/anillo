@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
 ```python
 from anillo.app import application
-from anillo.utils import chain
+from anillo.utils.common import chain
 from anillo.http import Ok
 
 
@@ -92,7 +92,7 @@ def hello(request):
 
 urls = [
     url("/", index),
-    url("/hello", hello),
+    url("/hello", hello, methods=["get"]),
 ]
 
 app = application(router(urls))

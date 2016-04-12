@@ -1,4 +1,5 @@
 from anillo.http.request import Request
+from anillo.utils.structures import CaseInsensitiveDict
 from werkzeug.wsgi import get_input_stream
 from werkzeug.wrappers import BaseResponse, Request as WerkzeugRequest
 
@@ -22,10 +23,11 @@ class WerkzeugAdapter(WsgiAdapter):
             query_string=werkzeug_request.query_string,
             scheme=werkzeug_request.scheme,
             method=werkzeug_request.method,
-            headers=dict(werkzeug_request.headers),
+            headers=CaseInsensitiveDict(dict(werkzeug_request.headers)),
             body=get_input_stream(environ).read()
         )
+
         return request
 
     def from_response(self, response):
-        return WerkzeugResponse(response['body'], status=response['status'], headers=response['headers'])
+        return WerkzeugResponse(response['body'], status=response['status'], headers=dict(response['headers']))
