@@ -46,9 +46,24 @@ def json_app4(request):
                         headers={"Content-Type": "text/plain"})
     return response
 
+
 @wrap_json
 def json_app5(request):
     response = Response("not-dict-or-list-value",
+                        headers={"Content-Type": "text/plain"})
+    return response
+
+
+@wrap_json_body(preserve_raw_body=False)
+def json_app6(request):
+    response = Response(getattr(request, "raw_body", b"not exist"),
+                        headers={"Content-Type": "text/plain"})
+    return response
+
+
+@wrap_json_body(preserve_raw_body=True)
+def json_app7(request):
+    response = Response(getattr(request, "raw_body", b"not exist"),
                         headers={"Content-Type": "text/plain"})
     return response
 
@@ -91,7 +106,27 @@ def test_no_return_json_content_with_bad_content_type():
     response = json_app4(request)
     assert response.body == {"test": "test value"}
 
+
 def test_no_convert_the_json_content_not_list_or_dict_content():
     request = Request()
     response = json_app5(request)
     assert response.body == "not-dict-or-list-value"
+
+
+def test_no_preserve_raw_body():
+    request = Request()
+    request.body = b'{"test": "test value"}'
+    request.method = "POST"
+    request.headers = {"Content-Type": "application/json"}
+    response = json_app6(request)
+    assert response.body == b"not exist"
+
+
+def test_preserve_raw_body():
+    request = Request()
+    request.body = b'{"test": "test value"}'
+    request.method = "POST"
+    request.headers = {"Content-Type": "application/json"}
+    response = json_app7(request)
+    assert response.body == b'{"test": "test value"}'
+

@@ -33,16 +33,22 @@ def wrap_json(func=None, *, encoder=json.JSONEncoder):
     return wrapper
 
 
-def wrap_json_body(func):
+def wrap_json_body(func=None, *, preserve_raw_body=False):
     """
     A middleware that parses the body of json requests and
     add it to the request under the `body` attribute (replacing
-    the previous value).
+    the previous value). Can preserve the original value in
+    a new attribute `raw_body` if you give preserve_raw_body=True.
     """
+
+    if func is None:
+        return functools.partial(wrap_json_body, preserve_raw_body=preserve_raw_body)
 
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
+        if preserve_raw_body:
+            request.raw_body = request.body
         if ctype == "application/json":
             request.body = json.loads(request.body.decode("utf-8")) if request.body else None
         return func(request, *args, **kwargs)
@@ -74,7 +80,7 @@ def wrap_json_response(func=None, *, encoder=json.JSONEncoder):
     """
 
     if func is None:
-        return functools.partial(wrap_json, encoder=encoder)
+        return functools.partial(wrap_json_response, encoder=encoder)
 
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
