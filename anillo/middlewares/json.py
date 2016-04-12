@@ -47,9 +47,9 @@ def wrap_json_body(func=None, *, preserve_raw_body=False):
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
+        if preserve_raw_body:
+            request.raw_body = request.body
         if ctype == "application/json":
-            if preserve_raw_body:
-                request.raw_body = request.body
             request.body = json.loads(request.body.decode("utf-8")) if request.body else None
         return func(request, *args, **kwargs)
     return wrapper
