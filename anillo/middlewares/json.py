@@ -80,7 +80,7 @@ def wrap_json_response(func=None, *, encoder=json.JSONEncoder):
     """
 
     if func is None:
-        return functools.partial(wrap_json, encoder=encoder)
+        return functools.partial(wrap_json_response, encoder=encoder)
 
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
