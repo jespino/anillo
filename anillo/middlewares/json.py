@@ -3,7 +3,7 @@ import functools
 from cgi import parse_header
 
 
-def wrap_json(func=None, *, encoder=json.JSONEncoder):
+def wrap_json(func=None, *, encoder=json.JSONEncoder, preserve_raw_body=False):
     """
     A middleware that parses the body of json requests and
     encodes the json responses.
@@ -16,21 +16,17 @@ def wrap_json(func=None, *, encoder=json.JSONEncoder):
     It is recommended use the `wrap_json_body` and wrap_json_response`
     instead of this.
     """
-    if func is None:
-        return functools.partial(wrap_json, encoder=encoder)
 
-    @functools.wraps(func)
-    def wrapper(request, *args, **kwargs):
-        ctype, pdict = parse_header(request.headers.get('Content-Type', ''))
-        if ctype == "application/json":
-            request.body = json.loads(request.body.decode("utf-8")) if request.body else None
-        response = func(request, *args, **kwargs)
-        if "Content-Type" in response.headers and response.headers['Content-Type'] is not None:
-            ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
-            if ctype == "application/json" and (isinstance(response.body, dict) or isinstance(response.body, list)):
-                response.body = json.dumps(response.body, cls=encoder)
-        return response
-    return wrapper
+    if func is None:
+        return functools.partial(
+            wrap_json,
+            encoder=encoder,
+            preserve_raw_body=preserve_raw_body
+        )
+
+    wrapped_func = wrap_json_body(func, preserve_raw_body=preserve_raw_body)
+    wrapped_func = wrap_json_response(wrapped_func, encoder=encoder)
+    return wrapped_func
 
 
 def wrap_json_body(func=None, *, preserve_raw_body=False):
@@ -42,7 +38,10 @@ def wrap_json_body(func=None, *, preserve_raw_body=False):
     """
 
     if func is None:
-        return functools.partial(wrap_json_body, preserve_raw_body=preserve_raw_body)
+        return functools.partial(
+            wrap_json_body,
+            preserve_raw_body=preserve_raw_body
+        )
 
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
@@ -86,12 +85,10 @@ def wrap_json_response(func=None, *, encoder=json.JSONEncoder):
     def wrapper(request, *args, **kwargs):
         response = func(request, *args, **kwargs)
 
-        if not response.body:
-            return response
-
-        ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
-        if ctype == "application/json":
-            response.body = json.dumps(response.body, cls=encoder)
+        if "Content-Type" in response.headers and response.headers['Content-Type'] is not None:
+            ctype, pdict = parse_header(response.headers.get('Content-Type', ''))
+            if ctype == "application/json" and (isinstance(response.body, dict) or isinstance(response.body, list)):
+                response.body = json.dumps(response.body, cls=encoder)
         return response
 
     return wrapper
