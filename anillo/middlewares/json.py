@@ -1,4 +1,7 @@
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import functools
 from cgi import parse_header
 
