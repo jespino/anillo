@@ -6,7 +6,6 @@
 [![Latest Version](https://img.shields.io/pypi/v/anillo.svg)](https://pypi.python.org/pypi/anillo/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/anillo.svg)](https://pypi.python.org/pypi/anillo/)
 [![License](https://img.shields.io/pypi/l/anillo.svg)](https://pypi.python.org/pypi/anillo/)
-[![Downloads](https://img.shields.io/pypi/dm/anillo.svg)](https://pypi.python.org/pypi/anillo/)
 
 Anillo is a Ring/Compojure inspired nanoframework build on top of werkzeug
 library using some utilities and the routing system.
