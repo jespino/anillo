@@ -2,11 +2,11 @@
 
 [![Build Status](http://img.shields.io/travis/jespino/anillo.svg?branch=master)](https://travis-ci.org/jespino/anillo)
 [![Coveralls Status](http://img.shields.io/coveralls/jespino/anillo/master.svg)](https://coveralls.io/r/jespino/anillo)
-[![Development Status](https://pypip.in/status/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
-[![Latest Version](https://pypip.in/version/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
-[![Supported Python versions](https://pypip.in/py_versions/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
-[![License](https://pypip.in/license/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
-[![Downloads](https://pypip.in/download/anillo/badge.svg)](https://pypi.python.org/pypi/anillo/)
+[![Development Status](https://img.shields.io/pypi/status/anillo.svg)](https://pypi.python.org/pypi/anillo/)
+[![Latest Version](https://img.shields.io/pypi/v/anillo.svg)](https://pypi.python.org/pypi/anillo/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/anillo.svg)](https://pypi.python.org/pypi/anillo/)
+[![License](https://img.shields.io/pypi/l/anillo.svg)](https://pypi.python.org/pypi/anillo/)
+[![Downloads](https://img.shields.io/pypi/dm/anillo.svg)](https://pypi.python.org/pypi/anillo/)
 
 Anillo is a Ring/Compojure inspired nanoframework build on top of werkzeug
 library using some utilities and the routing system.
